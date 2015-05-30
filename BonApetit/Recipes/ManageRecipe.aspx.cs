@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -11,7 +12,9 @@ namespace BonApetit.Recipes
 {
     public partial class ManageRecipe : System.Web.UI.Page
     {
-        private Recipe recipe;
+        private ApplicationDbContext db = new ApplicationDbContext();
+
+        private Recipe recipe = null;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -22,7 +25,7 @@ namespace BonApetit.Recipes
         protected void SaveRecipe(object sender, EventArgs e)
         {
             BonApetit.Models.Image image = null;
- 
+
             if (ImageUpload.HasFile)
             {
                 string fileExtension = System.IO.Path.GetExtension(ImageUpload.FileName).ToLower();
@@ -55,30 +58,38 @@ namespace BonApetit.Recipes
                 }
             }
 
-            try
+            Guid recipeId;
+            if (Guid.TryParse(Request.QueryString["recipeId"], out recipeId))
             {
-                IEnumerable<string> ingredientValues = this.Ingredients.GetAllValues();
-                var newIngredients = ingredientValues.Where(newi => this.recipe.Ingredients.Any(i => i.Content != newi)).Select(i => (Ingredient)i);
-                var ingredients = this.recipe.Ingredients.Where(i => ingredientValues.Contains(i.Content)).ToList();
-                ingredients.AddRange(newIngredients);
+                try
+                {
+                    this.recipe = db.Recipes.Find(recipeId);
 
-                var removedIngredients = this.recipe.Ingredients.Where(i => !ingredientValues.Contains(i.Content));
+                    //IEnumerable<string> ingredientValues = this.Ingredients.GetAllValues();
+                    //var newIngredients = ingredientValues.Where(newi => this.recipe.Ingredients.Any(i => i.Content != newi)).Select(i => (Ingredient)i);
+                    //var ingredients = this.recipe.Ingredients.Where(i => ingredientValues.Contains(i.Content)).ToList();
+                    //ingredients.AddRange(newIngredients);
 
-                this.recipe.Name = this.Name.Text;
-                this.recipe.Description = this.Description.Text;
-                this.recipe.PrepareInstructions = this.PreparationInstructions.Text;
-                this.recipe.Image = image ?? this.recipe.Image;
-                this.recipe.Ingredients = ingredients;
+                    //var removedIngredients = this.recipe.Ingredients.Where(i => !ingredientValues.Contains(i.Content));
 
-                var context = new ApplicationDbContext();
-                // Remove ingredients and image
-                context.SaveChanges();
+                    this.recipe.Name = this.Name.Text;
+                    this.recipe.Description = this.Description.Text;
+                    this.recipe.PrepareInstructions = this.PreparationInstructions.Text;
+                    this.recipe.Image = image ?? this.recipe.Image;
 
-                Response.Redirect("~/Recipes/RecipeDetails?recipeId=" + recipe.Id);
-            }
-            catch (Exception ex)
-            {
-                FailureText.Text = ex.Message;
+                    //this.EditCategories(recipeModel, recipe);
+
+                    this.EditIngredients();
+
+                    db.Entry(recipe).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    Response.Redirect("~/Recipes/RecipeDetails?recipeId=" + recipe.Id);
+                }
+                catch (Exception ex)
+                {
+                    FailureText.Text = ex.Message;
+                }
             }
         }
 
@@ -89,8 +100,7 @@ namespace BonApetit.Recipes
             Guid recipeId;
             if (Guid.TryParse(Request.QueryString["recipeId"], out recipeId))
             {
-                var _db = new ApplicationDbContext();
-                this.recipe = _db.Recipes.Find(recipeId);
+                this.recipe = db.Recipes.Find(recipeId);
             }
 
             return this.recipe;
@@ -153,5 +163,45 @@ namespace BonApetit.Recipes
         }
 
         #endregion
+
+        private void EditIngredients()
+        {
+            var newIngredients = new List<Ingredient>();
+
+            foreach (var ingredientContent in this.Ingredients.GetAllValues())
+            {
+                Ingredient ingredient;
+                var existingIngredient = recipe.Ingredients.FirstOrDefault(i => i.Content == ingredientContent);
+                if (existingIngredient == null)
+                    ingredient = new Ingredient() { Content = ingredientContent };
+                else
+                {
+                    ingredient = existingIngredient;
+                    this.recipe.Ingredients.Remove(existingIngredient);
+                }
+
+                newIngredients.Add(ingredient);
+            }
+
+            db.Delete(this.recipe.Ingredients);
+
+            this.recipe.Ingredients = newIngredients;
+        }
+
+        //private void EditCategories(EditRecipeViewModel recipeModel, Recipe recipe)
+        //{
+        //    var newCategories = new List<Category>();
+
+        //    foreach (var categoryId in recipeModel.Categories)
+        //    {
+        //        var existing = recipe.Categories.FirstOrDefault(c => c.Id == categoryId);
+        //        if (existing == null)
+        //            recipe.Categories.Add(db.GetCategory(categoryId));
+        //    }
+
+        //    var categoriesToRemove = recipe.Categories.Where(c => !recipeModel.Categories.Contains(c.Id)).ToList();
+        //    foreach (var categoryToRemove in categoriesToRemove)
+        //        recipe.Categories.Remove(categoryToRemove);
+        //}
     }
 }

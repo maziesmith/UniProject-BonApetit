@@ -76,6 +76,16 @@ namespace BonApetit.Models
             return this.Categories;
         }
 
+        public void Delete(Ingredient ingredient)
+        {
+            this.Ingredients.Remove(ingredient);
+        }
+
+        public void Delete(IEnumerable<Ingredient> ingredient)
+        {
+            this.Ingredients.RemoveRange(ingredient);
+        }
+
         public override int SaveChanges()
         {
             var deletedImagesUrls = this.ChangeTracker.Entries<Image>().Where(i => i.State == EntityState.Deleted).Select(i => i.Entity.ImageUrl);

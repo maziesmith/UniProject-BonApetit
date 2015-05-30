@@ -46,8 +46,10 @@ namespace BonApetit.Controls.Forms
 
         public void InitializeControl(IEnumerable<string> initialData)
         {
-            if (initialData.Count() >= 0)
+            if (initialData.Count() > 0)
             {
+                this.MaxAdditionalEntryId = initialData.Count();
+
                 this.MainEntry.Text = initialData.First();
 
                 for (int i = 1; i < initialData.Count(); i++)
