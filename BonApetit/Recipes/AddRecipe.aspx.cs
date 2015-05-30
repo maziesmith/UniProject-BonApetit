@@ -10,6 +10,8 @@ namespace BonApetit.Recipes
 {
     public partial class AddRecipe : System.Web.UI.Page
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             this.ErrorMessage.Visible = !string.IsNullOrWhiteSpace(this.FailureText.Text);
@@ -58,9 +60,8 @@ namespace BonApetit.Recipes
                         Ingredients = ingredients,
                     };
 
-                    var context = new ApplicationDbContext();
-                    context.AddRecipe(recipe);
-                    context.SaveChanges();
+                    db.AddRecipe(recipe);
+                    db.SaveChanges();
 
                     Response.Redirect("~/Recipes/RecipeDetails?recipeId=" + recipe.Id);
                 }

@@ -16,9 +16,14 @@ namespace BonApetit.Models
 
         public virtual List<Recipe> Recipes { get; set; }
 
-        public Category(string name)
+        public Category()
         {
             this.Id = Guid.NewGuid();
+        }
+
+        public Category(string name)
+            : this()
+        {
             this.Name = name;
         }
     }

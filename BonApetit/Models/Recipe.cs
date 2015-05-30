@@ -14,9 +14,14 @@ namespace BonApetit.Models
         [MaxLength(256), Required]
         public string Name { get; set; }
 
+        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
+        [DataType(DataType.MultilineText)]
         public string PrepareInstructions { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime CreateDate { get; set; }
 
         public virtual Image Image { get; set; }
 
@@ -28,12 +33,13 @@ namespace BonApetit.Models
 
         public Recipe()
         {
-
+            this.Id = Guid.NewGuid();
+            this.CreateDate = DateTime.UtcNow;
         }
 
         public Recipe(string name)
+            : this()
         {
-            this.Id = Guid.NewGuid();
             this.Name = name;
         }
     }

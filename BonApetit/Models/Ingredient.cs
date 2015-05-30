@@ -16,11 +16,12 @@ namespace BonApetit.Models
 
         public Ingredient()
         {
+            this.Id = Guid.NewGuid();
         }
 
         public Ingredient(string content)
+            : this()
         {
-            this.Id = Guid.NewGuid();
             this.Content = content;
         }
 
@@ -29,11 +30,5 @@ namespace BonApetit.Models
             Ingredient ingredient = new Ingredient(s);
             return ingredient;
         }
-
-        //public static implicit operator Ingredient(string s)
-        //{
-        //    Ingredient ingredient = new Ingredient(s);
-        //    return ingredient;
-        //}
     }
 }

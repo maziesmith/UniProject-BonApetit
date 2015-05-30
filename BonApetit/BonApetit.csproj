@@ -394,6 +394,10 @@
     <Compile Include="Migrations\201505121731238_CategoriesAndFavourites.Designer.cs">
       <DependentUpon>201505121731238_CategoriesAndFavourites.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201505301228111_RecipeCreateDate.cs" />
+    <Compile Include="Migrations\201505301228111_RecipeCreateDate.Designer.cs">
+      <DependentUpon>201505301228111_RecipeCreateDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -467,6 +471,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201505121731238_CategoriesAndFavourites.resx">
       <DependentUpon>201505121731238_CategoriesAndFavourites.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505301228111_RecipeCreateDate.resx">
+      <DependentUpon>201505301228111_RecipeCreateDate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

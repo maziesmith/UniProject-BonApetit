@@ -10,6 +10,8 @@ namespace BonApetit.Recipes
 {
     public partial class Recipes : System.Web.UI.Page
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
+
         protected void Page_Load(object sender, EventArgs e)
         {
 

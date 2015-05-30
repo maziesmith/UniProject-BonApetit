@@ -37,7 +37,7 @@
 
             <asp:ListView ID="RecipesView" runat="server" ItemType="BonApetit.Models.Recipe" DataKeyNames="Id" SelectMethod="GetRecipes">
                 <EmptyDataTemplate>
-                    <span>No data was returned.</span>
+                    <div class="alert alert-warning text-center" role="alert">No recipes found.</div>
                 </EmptyDataTemplate>
 
                 <ItemTemplate>
