@@ -17,11 +17,32 @@ namespace BonApetit.Recipes
 
         }
 
-        public IQueryable<Recipe> GetRecipes()
+        public IEnumerable<Recipe> GetRecipes()
         {
-            var _db = new ApplicationDbContext();
-            IQueryable<Recipe> query = _db.Recipes;
-            return query;
+            int pageId;
+            int.TryParse(Request.QueryString["id"], out pageId);
+
+            string category = Request.QueryString["category"];
+
+            var allRecipes = db.GetRecipes(category).OrderByDescending(r => r.CreateDate);
+
+            var totalRecipesCount = allRecipes.Count();
+            var recipes = allRecipes.Skip(pageId * 4).Take(4);
+
+            return recipes;
+        }
+
+        public IEnumerable<Recipe> LatestRecipes_GetData()
+        {
+            var allRecipes = db.GetRecipes().OrderByDescending(r => r.CreateDate);
+            var latestRecipes = allRecipes.Take(3);
+            return latestRecipes;
+        }
+
+        public IEnumerable<Category> Categories_GetData()
+        {
+            var categories = db.GetCategories();
+            return categories;
         }
     }
 }

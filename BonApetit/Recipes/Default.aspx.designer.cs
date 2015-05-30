@@ -22,6 +22,15 @@ namespace BonApetit.Recipes {
         protected global::System.Web.UI.WebControls.LoginView AdminPanel;
         
         /// <summary>
+        /// Categories control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater Categories;
+        
+        /// <summary>
         /// RecipesView control.
         /// </summary>
         /// <remarks>
@@ -29,5 +38,14 @@ namespace BonApetit.Recipes {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ListView RecipesView;
+        
+        /// <summary>
+        /// LatestRecipes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater LatestRecipes;
     }
 }

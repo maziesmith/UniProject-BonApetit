@@ -39,6 +39,14 @@ namespace BonApetit.Models
             return recipe;
         }
 
+        public IQueryable<Recipe> GetRecipes(string categoryName = null)
+        {
+            if (categoryName != null)
+                return this.Recipes.Where(r => r.Categories.Any(c => c.Name == categoryName));
+            else
+                return this.Recipes;
+        }
+
         public void DeleteRecipe(Guid id)
         {
             var recipe = this.GetRecipe(id);
@@ -61,6 +69,11 @@ namespace BonApetit.Models
         private void DeleteImage(Image image)
         { 
             this.Images.Remove(image);
+        }
+
+        public IQueryable<Category> GetCategories()
+        {
+            return this.Categories;
         }
 
         public override int SaveChanges()
