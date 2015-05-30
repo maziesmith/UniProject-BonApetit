@@ -23,6 +23,8 @@ namespace BonApetit.Recipes
             }
 
             this.SetPageTitle();
+
+            
         }
 
         #region Get Data Methods
@@ -80,6 +82,12 @@ namespace BonApetit.Recipes
             {
                 this.Title = "Recipe not found";
             }
+        }
+
+        protected void EditLink_DataBinding(object sender, EventArgs e)
+        {
+            var link = sender as HyperLink;
+            link.NavigateUrl = ResolveUrl("~/Recipes/ManageRecipe?recipeId=" + this.recipe.Id.ToString()); 
         }
     }
 }

@@ -4,45 +4,42 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using BonApetit.Controls.Forms;
 using BonApetit.Models;
 
 namespace BonApetit.Recipes
 {
     public partial class ManageRecipe : System.Web.UI.Page
     {
+        private Recipe recipe;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack)
                 this.ErrorMessage.Visible = !string.IsNullOrWhiteSpace(this.FailureText.Text);
-
-
         }
 
         protected void SaveRecipe(object sender, EventArgs e)
         {
-            bool isFileExtensionSupported = false;
-            string imagesPath = Server.MapPath("~/Recipes/Images/");
+            BonApetit.Models.Image image = null;
+ 
             if (ImageUpload.HasFile)
             {
                 string fileExtension = System.IO.Path.GetExtension(ImageUpload.FileName).ToLower();
                 string[] supportedExtensions = { ".gif", ".png", ".jpeg", ".jpg" };
-                isFileExtensionSupported = supportedExtensions.Contains(fileExtension);
-            }
+                bool isFileExtensionSupported = supportedExtensions.Contains(fileExtension);
 
-            if (isFileExtensionSupported)
-            {
-                try
+                if (isFileExtensionSupported)
                 {
+                    string imagesPath = Server.MapPath("~/Recipes/Images/");
                     var physicalImageUrl = imagesPath + ImageUpload.FileName;
 
                     // Save to Images folder.
                     ImageUpload.PostedFile.SaveAs(physicalImageUrl);
-                    // Save to Images/Thumbs folder.
-                    //ImageUpload.PostedFile.SaveAs(imagesPath + "Thumbs/" + ImageUpload.FileName);
 
                     var imageTitle = System.IO.Path.GetFileNameWithoutExtension(ImageUpload.FileName);
                     var imageUrl = System.IO.Path.GetFileName(ImageUpload.FileName);
-                    var image = new BonApetit.Models.Image()
+                    image = new BonApetit.Models.Image()
                     {
                         Title = imageTitle,
                         AltText = imageTitle,
@@ -50,32 +47,111 @@ namespace BonApetit.Recipes
                         CreatedDate = DateTime.Now,
                         ImageUrl = imageUrl
                     };
-
-                    List<Ingredient> ingredients = this.Ingredients.GetAllValues().Select(s => (Ingredient)s).ToList();
-
-                    var recipe = new Recipe(this.Name.Text)
-                    {
-                        Description = this.Description.Text,
-                        PrepareInstructions = this.PreparationInstructions.Text,
-                        Image = image,
-                        Ingredients = ingredients,
-                    };
-                    
-                    var context = new ApplicationDbContext();
-                    context.AddRecipe(recipe);
-                    context.SaveChanges();
-
-                    Response.Redirect("~/Recipes/RecipeDetails?recipeId=" + recipe.Id);
                 }
-                catch (Exception ex)
+                else
                 {
-                    FailureText.Text = ex.Message;
+                    FailureText.Text = "Unsupported file type.";
+                    return;
                 }
             }
-            else
+
+            try
             {
-                FailureText.Text = "Unsupported file type.";
+                IEnumerable<string> ingredientValues = this.Ingredients.GetAllValues();
+                var newIngredients = ingredientValues.Where(newi => this.recipe.Ingredients.Any(i => i.Content != newi)).Select(i => (Ingredient)i);
+                var ingredients = this.recipe.Ingredients.Where(i => ingredientValues.Contains(i.Content)).ToList();
+                ingredients.AddRange(newIngredients);
+
+                var removedIngredients = this.recipe.Ingredients.Where(i => !ingredientValues.Contains(i.Content));
+
+                this.recipe.Name = this.Name.Text;
+                this.recipe.Description = this.Description.Text;
+                this.recipe.PrepareInstructions = this.PreparationInstructions.Text;
+                this.recipe.Image = image ?? this.recipe.Image;
+                this.recipe.Ingredients = ingredients;
+
+                var context = new ApplicationDbContext();
+                // Remove ingredients and image
+                context.SaveChanges();
+
+                Response.Redirect("~/Recipes/RecipeDetails?recipeId=" + recipe.Id);
+            }
+            catch (Exception ex)
+            {
+                FailureText.Text = ex.Message;
             }
         }
+
+        // The id parameter should match the DataKeyNames value set on the control
+        // or be decorated with a value provider attribute, e.g. [QueryString]int id
+        public BonApetit.Models.Recipe EditForm_GetItem()
+        {
+            Guid recipeId;
+            if (Guid.TryParse(Request.QueryString["recipeId"], out recipeId))
+            {
+                var _db = new ApplicationDbContext();
+                this.recipe = _db.Recipes.Find(recipeId);
+            }
+
+            return this.recipe;
+        }
+
+        protected void Ingredients_DataBinding(object sender, EventArgs args)
+        {
+            var ingredients = sender as DynamicTextBox;
+            ingredients.InitializeControl(this.recipe.Ingredients.Select(i => i.Content));
+        }
+
+        #region Elements
+
+        private TableCell EditFormContent
+        {
+            get
+            {
+                return this.EditForm.Row.Cells[0];
+            }
+        }
+
+        private TextBox Name
+        {
+            get
+            {
+                return this.EditForm.FindControl("Name") as TextBox;
+            }
+        }
+
+        private TextBox Description
+        {
+            get
+            {
+                return this.EditForm.FindControl("Description") as TextBox;
+            }
+        }
+
+        private TextBox PreparationInstructions
+        {
+            get
+            {
+                return this.EditForm.FindControl("PreparationInstructions") as TextBox;
+            }
+        }
+
+        private DynamicTextBox Ingredients
+        {
+            get
+            {
+                return this.EditForm.FindControl("Ingredients") as DynamicTextBox;
+            }
+        }
+
+        private FileUpload ImageUpload
+        {
+            get
+            {
+                return this.EditForm.FindControl("ImageUpload") as FileUpload;
+            }
+        }
+
+        #endregion
     }
 }

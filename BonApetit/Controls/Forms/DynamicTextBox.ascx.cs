@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using BonApetit.Models;
 
 namespace BonApetit.Controls.Forms
 {
@@ -43,10 +44,23 @@ namespace BonApetit.Controls.Forms
 
         #endregion
 
-        public void AddAdditionalEntry(int index)
+        public void InitializeControl(IEnumerable<string> initialData)
+        {
+            if (initialData.Count() >= 0)
+            {
+                this.MainEntry.Text = initialData.First();
+
+                for (int i = 1; i < initialData.Count(); i++)
+                {
+                    this.AddAdditionalEntry(i, initialData.ElementAt(i));
+                }
+            }
+        }
+
+        public void AddAdditionalEntry(int index, string entryText = null)
         {
             this.AdditionalEntriesIds.Add(index);
-            CreateAdditionalEntry(index);
+            CreateAdditionalEntry(index, entryText);
         }
 
         public void RemoveAdditionalEntry(int index, DynamicTextBoxAdditionalEntry entry)
@@ -104,10 +118,11 @@ namespace BonApetit.Controls.Forms
             this.AddAdditionalEntry(additionaEntryId);
         }
 
-        private void CreateAdditionalEntry(int index)
+        private void CreateAdditionalEntry(int index, string entryText = null)
         {
             var additionalEntry = Page.LoadControl("~/Controls/Forms/DynamicTextBoxAdditionalEntry.ascx") as DynamicTextBoxAdditionalEntry;
             additionalEntry.Index = index;
+            additionalEntry.Text = entryText;
             AdditionalEntries.Controls.Add(additionalEntry);
         }
 
