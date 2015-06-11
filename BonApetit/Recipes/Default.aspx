@@ -30,7 +30,7 @@
                         <li class="item"><a href="Default.aspx">All</a></li>
                         <asp:Repeater runat="server" ID="Categories" SelectMethod="Categories_GetData" ItemType="BonApetit.Models.Category">
                             <ItemTemplate>
-                                <li class="item"><a href="Default.aspx?category=<%#: Item.Name %>>"><%#: Item.Name %>></a></li>
+                                <li class="item"><a href="Default.aspx?category=<%#: Item.Name %>"><%#: Item.Name %></a></li>
                             </ItemTemplate>
                         </asp:Repeater>
                     </ul>

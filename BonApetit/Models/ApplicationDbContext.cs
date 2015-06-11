@@ -81,6 +81,22 @@ namespace BonApetit.Models
             return this.Categories;
         }
 
+        public Category GetCategory(Guid id)
+        {
+            return this.Categories.FirstOrDefault(c => c.Id == id);
+        }
+
+        public void AddCategory(string name)
+        {
+            var category = new Category(name);
+            this.AddCategory(category);
+        }
+
+        public void AddCategory(Category category)
+        {
+            this.Categories.Add(category);
+        }
+
         public void Delete(Ingredient ingredient)
         {
             this.Ingredients.Remove(ingredient);

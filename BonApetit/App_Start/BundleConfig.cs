@@ -37,9 +37,11 @@ namespace BonApetit
             //bundles.Add(new ScriptBundle("~/bundles/dropzonescripts").Include(
             //         "~/Scripts/dropzone/dropzone.js"));
 
-            //bundles.Add(new StyleBundle("~/Content/dropzonescss").Include("~/Scripts/dropzone/css/basic.css", "~/Scripts/dropzone/css/dropzone.css"));
+            bundles.Add(new StyleBundle("~/Content/bootstrapselect").Include("~/Content/bootstrap-select.css"));
 
-            bundles.Add(new ScriptBundle("~/bundles/filestyle").Include("~/Scripts/bootstrap-filestyle.min.js"));
+            bundles.Add(new ScriptBundle("~/bundles/filestyle").Include(
+                "~/Scripts/bootstrap-filestyle.min.js",
+                "~/Scripts/bootstrap-select.js"));
 
             ScriptManager.ScriptResourceMapping.AddDefinition(
                 "respond",

@@ -166,6 +166,7 @@
       <DependentUpon>BonApetit.mdf</DependentUpon>
     </Content>
     <Content Include="Contact.aspx" />
+    <Content Include="Content\bootstrap-select.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
@@ -184,6 +185,7 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Recipes\Default.aspx" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
+    <Content Include="Scripts\bootstrap-select.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

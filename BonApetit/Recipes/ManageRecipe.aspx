@@ -42,6 +42,21 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <asp:Label runat="server" AssociatedControlID="CategoriesList" CssClass="col-md-2 control-label">Categories</asp:Label>
+                                <div class="col-md-10">
+                                    <asp:ListBox CssClass="selectpicker" runat="server" ID="CategoriesList" SelectMethod="GetCategories" ItemType="BonApetit.Models.Category"
+                                        DataTextField="Name" DataValueField="Id" AppendDataBoundItems="false" AutoPostBack="false" SelectionMode="Multiple" OnDataBound="CategoriesList_DataBound">
+                                    </asp:ListBox><br />
+                                    or add new category:
+                                    <div class="input-group">
+                                        <asp:TextBox ID="NewCategory" runat="server" CssClass="form-control" />
+                                        <span class="input-group-btn">
+                                            <asp:Button ID="NewCategoryButton" CssClass="btn btn-default" runat="server" Text="Add Category" OnClick="NewCategoryButton_Click" CausesValidation="false" />
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <asp:Label runat="server" AssociatedControlID="ImageUpload" CssClass="col-md-2 control-label">Image</asp:Label>
                                 <div class="col-md-10">
                                     <asp:Image runat="server" CssClass="thumbnail" ImageUrl=<%#: ResolveUrl("~/Recipes/Images/" + Item.Image.ImageUrl) %> />
@@ -59,6 +74,7 @@
             </div>
 
             <%: Scripts.Render("~/bundles/filestyle") %>
+            <%: Styles.Render("~/Content/bootstrapselect") %>
         </ItemTemplate>
     </asp:FormView>
 </asp:Content>

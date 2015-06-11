@@ -77,9 +77,8 @@ namespace BonApetit.Recipes
                     this.recipe.PrepareInstructions = HttpUtility.HtmlDecode(this.PreparationInstructions.Text);
                     this.recipe.Image = image ?? this.recipe.Image;
 
-                    //this.EditCategories(recipeModel, recipe);
-
                     this.EditIngredients();
+                    this.EditCategories();
 
                     db.Entry(recipe).State = EntityState.Modified;
                     db.SaveChanges();
@@ -110,6 +109,44 @@ namespace BonApetit.Recipes
         {
             var ingredients = sender as DynamicTextBox;
             ingredients.InitializeControl(this.recipe.Ingredients.Select(i => i.Content));
+        }
+
+        public IEnumerable<Category> GetCategories()
+        {
+            var categories = db.GetCategories();
+            return categories;
+        }
+
+        protected void CategoriesList_DataBound(object sender, EventArgs e)
+        {
+            foreach (var category in this.recipe.Categories)
+            {
+                var listItem = this.CategoriesList.Items.FindByValue(category.Id.ToString());
+                listItem.Selected = true;
+            }
+        }
+
+        protected void NewCategoryButton_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(this.NewCategory.Text))
+            {
+                try
+                {
+                    var category = new Category(this.NewCategory.Text);
+                    db.AddCategory(category);
+                    db.SaveChanges();
+
+                    var listItem = new ListItem(category.Name, category.Id.ToString());
+                    listItem.Selected = true;
+                    this.CategoriesList.Items.Add(listItem);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+            this.NewCategory.Text = string.Empty;
         }
 
         #region Elements
@@ -154,6 +191,22 @@ namespace BonApetit.Recipes
             }
         }
 
+        private ListBox CategoriesList
+        {
+            get
+            {
+                return this.EditForm.FindControl("CategoriesList") as ListBox;
+            }
+        }
+
+        private TextBox NewCategory
+        {
+            get
+            {
+                return this.EditForm.FindControl("NewCategory") as TextBox;
+            }
+        }
+
         private FileUpload ImageUpload
         {
             get
@@ -188,20 +241,19 @@ namespace BonApetit.Recipes
             this.recipe.Ingredients = newIngredients;
         }
 
-        //private void EditCategories(EditRecipeViewModel recipeModel, Recipe recipe)
-        //{
-        //    var newCategories = new List<Category>();
+        private void EditCategories()
+        {
+            foreach (var index in this.CategoriesList.GetSelectedIndices())
+            {
+                var categoryId = new Guid(this.CategoriesList.Items[index].Value);
+                var existing = this.recipe.Categories.FirstOrDefault(c => c.Id == categoryId);
+                if (existing == null)
+                    this.recipe.Categories.Add(db.GetCategory(categoryId));
+            }
 
-        //    foreach (var categoryId in recipeModel.Categories)
-        //    {
-        //        var existing = recipe.Categories.FirstOrDefault(c => c.Id == categoryId);
-        //        if (existing == null)
-        //            recipe.Categories.Add(db.GetCategory(categoryId));
-        //    }
-
-        //    var categoriesToRemove = recipe.Categories.Where(c => !recipeModel.Categories.Contains(c.Id)).ToList();
-        //    foreach (var categoryToRemove in categoriesToRemove)
-        //        recipe.Categories.Remove(categoryToRemove);
-        //}
+            var categoriesToRemove = recipe.Categories.Where(c => !this.CategoriesList.Items.FindByValue(c.Id.ToString()).Selected).ToList();
+            foreach (var categoryToRemove in categoriesToRemove)
+                this.recipe.Categories.Remove(categoryToRemove);
+        }
     }
 }
