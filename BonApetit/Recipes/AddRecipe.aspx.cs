@@ -54,8 +54,8 @@ namespace BonApetit.Recipes
 
                     var recipe = new Recipe(this.Name.Text)
                     {
-                        Description = this.Description.Text,
-                        PrepareInstructions = this.PreparationInstructions.Text,
+                        Description = HttpUtility.HtmlDecode(this.Description.Text),
+                        PrepareInstructions = HttpUtility.HtmlDecode(this.PreparationInstructions.Text),
                         Image = image,
                         Ingredients = ingredients,
                     };

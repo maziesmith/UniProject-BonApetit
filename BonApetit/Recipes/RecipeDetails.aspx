@@ -52,7 +52,13 @@
                     <div class="col-md-8">
                         <div class="row">
                             <div class="col-md-5">
-                                <asp:Image ID="RecipeImage" CssClass="img-thumbnail img-responsive" runat="server" />
+                                <div class="row">
+                                    <asp:Image ID="RecipeImage" CssClass="img-thumbnail img-responsive" runat="server" />
+                                </div>
+                                <div class="row">
+                                    <asp:Button ID="AddToFavouritesButton" runat="server" Text="Add to Favourites" CssClass="btn btn-success" Visible="false" OnClick="AddToFavouritesButton_Click" />
+                                    <asp:Button ID="RemoveFromFavouritesButton" runat="server" Text="Remove from Favourites" CssClass="btn btn-danger" Visible="false" OnClick="RemoveFromFavouritesButton_Click" />
+                                </div>
                             </div>
 
                             <div class="col-md-7">
@@ -88,7 +94,15 @@
                         <div class="panel panel-warning">
                             <div class="panel-heading">Similar recipes</div>
                             <div class="panel-body">
-                                
+                                <asp:Repeater ID="SimilarRecipes" runat="server" ItemType="BonApetit.Models.Recipe" SelectMethod="SimilarRecipesView_GetData">
+                                    <ItemTemplate>
+                                        <div>
+                                            <a href="RecipeDetails.aspx?recipeId=<%#:Item.Id %>">
+                                                <img src="<%#: string.Format("Images/{0}", Item.Image.ImageUrl) %>" alt="<%#:Item.Image.AltText %>" title="<%#:Item.Name %>" class="img-thumbnail img-responsive" />
+                                            </a>
+                                        </div>
+                                    </ItemTemplate>
+                                </asp:Repeater>
                             </div>
                         </div>
                     </div>
@@ -97,11 +111,11 @@
                         <div class="panel panel-success">
                             <div class="panel-heading">Latest recipes</div>
                             <div class="panel-body">
-                                <asp:Repeater ID="Repeater1" runat="server" ItemType="BonApetit.Models.Recipe" SelectMethod="AdditionalRecipesView_GetData">
+                                <asp:Repeater ID="LatestRecipes" runat="server" ItemType="BonApetit.Models.Recipe" SelectMethod="LatestRecipesView_GetData">
                                     <ItemTemplate>
                                         <div>
                                             <a href="RecipeDetails.aspx?recipeId=<%#:Item.Id %>">
-                                                <img src="<%#: string.Format("/Images/{0}", Item.Image.ImageUrl) %>" alt="<%#:Item.Image.AltText %>" title="<%#:Item.Name %>" />
+                                                <img src="<%#: string.Format("Images/{0}", Item.Image.ImageUrl) %>" alt="<%#:Item.Image.AltText %>" title="<%#:Item.Name %>" class="img-thumbnail img-responsive" />
                                             </a>
                                         </div>
                                     </ItemTemplate>

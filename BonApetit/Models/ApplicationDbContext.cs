@@ -24,6 +24,11 @@ namespace BonApetit.Models
             return new ApplicationDbContext();
         }
 
+        public ApplicationUser GetUser(string id)
+        {
+            return this.Users.FirstOrDefault(u => u.Id == id);
+        }
+
         public void AddRecipe(Recipe recipe)
         {
             var recipeAlreadyExists = this.Recipes.Any(r => r.Id == recipe.Id || r.Name == recipe.Name);

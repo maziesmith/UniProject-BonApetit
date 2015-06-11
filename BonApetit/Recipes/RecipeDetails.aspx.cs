@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 using System.Web.ModelBinding;
 using System.Web.UI;
@@ -11,6 +12,8 @@ namespace BonApetit.Recipes
 {
     public partial class RecipeDetails : System.Web.UI.Page
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
+
         private Recipe recipe = null;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -18,13 +21,24 @@ namespace BonApetit.Recipes
             Guid recipeId;
             if (Guid.TryParse(Request.QueryString["recipeId"], out recipeId))
             {
-                var _db = new ApplicationDbContext();
-                this.recipe = _db.Recipes.Find(recipeId);
+                this.recipe = db.Recipes.Find(recipeId);
+
+                var user = ClaimsPrincipal.Current;
+                var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                var isRecipeFavourite = this.recipe.Users.Any(u => u.Id == userId);
+
+                if (isRecipeFavourite)
+                {
+                    this.ShowRemoveFromFavouritesButton();
+                }
+                else
+                {
+                    this.ShowAddToFavouritesButton();
+                }
             }
 
             this.SetPageTitle();
-
-            
         }
 
         #region Get Data Methods
@@ -39,9 +53,23 @@ namespace BonApetit.Recipes
             return this.recipe.Ingredients;
         }
 
-        public IEnumerable<BonApetit.Models.Recipe> AdditionalRecipesView_GetData()
+        public IEnumerable<BonApetit.Models.Recipe> LatestRecipesView_GetData()
         {
-            return null;
+            var allRecipes = db.GetRecipes().OrderByDescending(r => r.CreateDate);
+            var latestRecipes = allRecipes.Take(3);
+            return latestRecipes;
+        }
+
+        public IEnumerable<BonApetit.Models.Recipe> SimilarRecipesView_GetData()
+        {
+            var allRecipes = db.GetRecipes().ToList();
+            var similarRecipes = allRecipes
+                .Where(r => r.Id != recipe.Id)
+                .Where(r => r.Categories.Any(c => recipe.Categories.Any(rc => rc.Name == c.Name))) // Get recipes which have at least one category the current recipe has as well
+                .OrderByDescending(r => r.CreateDate)
+                .Take(3);
+
+            return similarRecipes;
         }
 
         #endregion
@@ -62,11 +90,8 @@ namespace BonApetit.Recipes
             string confirmValue = Request.Form["confirm_value"];
             if (confirmValue == "Yes")
             {
-                using (var _db = ApplicationDbContext.Create())
-                {
-                    _db.DeleteRecipe(this.recipe.Id);
-                    _db.SaveChanges();
-                }
+                db.DeleteRecipe(this.recipe.Id);
+                db.SaveChanges();
 
                 Response.Redirect("~/Recipes/");
             }
@@ -87,7 +112,73 @@ namespace BonApetit.Recipes
         protected void EditLink_DataBinding(object sender, EventArgs e)
         {
             var link = sender as HyperLink;
-            link.NavigateUrl = ResolveUrl("~/Recipes/ManageRecipe?recipeId=" + this.recipe.Id.ToString()); 
+            link.NavigateUrl = ResolveUrl("~/Recipes/ManageRecipe?recipeId=" + this.recipe.Id.ToString());
         }
+
+        #region Elements
+
+        private TableCell RecipeFormContent
+        {
+            get
+            {
+                return this.RecipeView.Row.Cells[0];
+            }
+        }
+
+        private Button AddToFavouritesButton
+        {
+            get
+            {
+                return this.RecipeFormContent.FindControl("AddToFavouritesButton") as Button;
+            }
+        }
+
+        private Button RemoveFromFavouritesButton
+        {
+            get
+            {
+                return this.RecipeFormContent.FindControl("RemoveFromFavouritesButton") as Button;
+            }
+        }
+
+        #endregion
+
+        #region Favourites buttons
+
+        protected void AddToFavouritesButton_Click(object sender, EventArgs e)
+        {
+            var user = ClaimsPrincipal.Current;
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            this.recipe.Users.Add(db.GetUser(userId));
+            db.SaveChanges();
+
+            this.ShowRemoveFromFavouritesButton();
+        }
+
+        protected void RemoveFromFavouritesButton_Click(object sender, EventArgs e)
+        {
+            var user = ClaimsPrincipal.Current;
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            this.recipe.Users.Remove(db.GetUser(userId));
+            db.SaveChanges();
+
+            this.ShowAddToFavouritesButton();
+        }
+
+        private void ShowAddToFavouritesButton()
+        {
+            this.AddToFavouritesButton.Visible = true;
+            this.RemoveFromFavouritesButton.Visible = false;
+        }
+
+        private void ShowRemoveFromFavouritesButton()
+        {
+            this.AddToFavouritesButton.Visible = false;
+            this.RemoveFromFavouritesButton.Visible = true;
+        }
+
+        #endregion
     }
 }

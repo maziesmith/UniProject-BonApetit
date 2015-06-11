@@ -73,8 +73,8 @@ namespace BonApetit.Recipes
                     //var removedIngredients = this.recipe.Ingredients.Where(i => !ingredientValues.Contains(i.Content));
 
                     this.recipe.Name = this.Name.Text;
-                    this.recipe.Description = this.Description.Text;
-                    this.recipe.PrepareInstructions = this.PreparationInstructions.Text;
+                    this.recipe.Description = HttpUtility.HtmlDecode(this.Description.Text);
+                    this.recipe.PrepareInstructions = HttpUtility.HtmlDecode(this.PreparationInstructions.Text);
                     this.recipe.Image = image ?? this.recipe.Image;
 
                     //this.EditCategories(recipeModel, recipe);

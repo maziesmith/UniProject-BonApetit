@@ -398,6 +398,14 @@
     <Compile Include="Migrations\201505301228111_RecipeCreateDate.Designer.cs">
       <DependentUpon>201505301228111_RecipeCreateDate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201506111339341_removeFavourites.cs" />
+    <Compile Include="Migrations\201506111339341_removeFavourites.Designer.cs">
+      <DependentUpon>201506111339341_removeFavourites.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506111342344_AddFacourites.cs" />
+    <Compile Include="Migrations\201506111342344_AddFacourites.Designer.cs">
+      <DependentUpon>201506111342344_AddFacourites.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -474,6 +482,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201505301228111_RecipeCreateDate.resx">
       <DependentUpon>201505301228111_RecipeCreateDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506111339341_removeFavourites.resx">
+      <DependentUpon>201506111339341_removeFavourites.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506111342344_AddFacourites.resx">
+      <DependentUpon>201506111342344_AddFacourites.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
