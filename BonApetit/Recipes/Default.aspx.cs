@@ -59,21 +59,26 @@ namespace BonApetit.Recipes
 
         protected void FavouritesButton_Load(object sender, EventArgs e)
         {
-            bool.TryParse(Request.QueryString[FavouritesQuery], out this.favouritesOnly);
-
-            QueryString query;
-            if (this.favouritesOnly)
+            if (Request.IsAuthenticated)
             {
-                query = QueryString.Current.Remove(FavouritesQuery);
-                this.FavouritesButton.Text = "Show all";
-            }
-            else
-            {
-                query = QueryString.Current.Add(FavouritesQuery, "true", true);
-                this.FavouritesButton.Text = "Show favourites";
-            }
+                bool.TryParse(Request.QueryString[FavouritesQuery], out this.favouritesOnly);
 
-            this.FavouritesButton.NavigateUrl = ResolveUrl("~/Recipes/Default.aspx") + query.ToString();
+                QueryString query;
+                if (this.favouritesOnly)
+                {
+                    query = QueryString.Current.Remove(FavouritesQuery);
+                    this.FavouritesButton.Text = "Show all";
+                }
+                else
+                {
+                    query = QueryString.Current.Add(FavouritesQuery, "true", true);
+                    this.FavouritesButton.Text = "Show favourites";
+                }
+
+                this.FavouritesButton.NavigateUrl = ResolveUrl("~/Recipes/Default.aspx") + query.ToString();
+
+                this.FavouritesButton.Visible = true;
+            }
         }
     }
 }

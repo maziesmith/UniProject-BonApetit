@@ -22,20 +22,7 @@ namespace BonApetit.Recipes
             if (Guid.TryParse(Request.QueryString["recipeId"], out recipeId))
             {
                 this.recipe = db.Recipes.Find(recipeId);
-
-                var user = ClaimsPrincipal.Current;
-                var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-                var isRecipeFavourite = this.recipe.Users.Any(u => u.Id == userId);
-
-                if (isRecipeFavourite)
-                {
-                    this.ShowRemoveFromFavouritesButton();
-                }
-                else
-                {
-                    this.ShowAddToFavouritesButton();
-                }
+                this.FavouritesButtons_Load();
             }
 
             this.SetPageTitle();
@@ -144,6 +131,21 @@ namespace BonApetit.Recipes
         #endregion
 
         #region Favourites buttons
+
+        protected void FavouritesButtons_Load()
+        {
+            if (Request.IsAuthenticated)
+            {
+                var user = ClaimsPrincipal.Current;
+                var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var isRecipeFavourite = this.recipe.Users.Any(u => u.Id == userId);
+
+                if (isRecipeFavourite)
+                    this.ShowRemoveFromFavouritesButton();
+                else
+                    this.ShowAddToFavouritesButton();
+            }
+        }
 
         protected void AddToFavouritesButton_Click(object sender, EventArgs e)
         {

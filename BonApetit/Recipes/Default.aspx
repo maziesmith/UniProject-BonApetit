@@ -37,7 +37,7 @@
                 </div>
             </div>
 
-            <asp:HyperLink OnLoad="FavouritesButton_Load" ID="FavouritesButton" runat="server" Text="Show Favourites" CssClass="btn btn-warning" />
+            <asp:HyperLink OnLoad="FavouritesButton_Load" ID="FavouritesButton" Visible="false" runat="server" Text="Show Favourites" CssClass="btn btn-warning" />
         </div>
 
         <div class="col-md-8">
