@@ -30,12 +30,14 @@
                         <li class="item"><a href="Default.aspx">All</a></li>
                         <asp:Repeater runat="server" ID="Categories" SelectMethod="Categories_GetData" ItemType="BonApetit.Models.Category">
                             <ItemTemplate>
-                                <li class="item"><a href="Default.aspx?category=<%#: Item.Name %>"><%#: Item.Name %></a></li>
+                                <li class="item"><asp:HyperLink runat="server" OnPreRender="CategoryLink_PreRender" Text="<%#: Item.Name %>"></asp:HyperLink></li>
                             </ItemTemplate>
                         </asp:Repeater>
                     </ul>
                 </div>
             </div>
+
+            <asp:HyperLink OnLoad="FavouritesButton_Load" ID="FavouritesButton" runat="server" Text="Show Favourites" CssClass="btn btn-warning" />
         </div>
 
         <div class="col-md-8">

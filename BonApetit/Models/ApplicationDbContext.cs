@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using System.Security.Claims;
 
 namespace BonApetit.Models
 {
@@ -44,12 +45,26 @@ namespace BonApetit.Models
             return recipe;
         }
 
-        public IQueryable<Recipe> GetRecipes(string categoryName = null)
+        public IQueryable<Recipe> GetRecipes(string categoryName = null, bool favouritesOnly = false)
         {
-            if (categoryName != null)
-                return this.Recipes.Where(r => r.Categories.Any(c => c.Name == categoryName));
+            if (favouritesOnly)
+            {
+                var principal = ClaimsPrincipal.Current;
+                var userId = principal.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var user = this.GetUser(userId);
+
+                if (categoryName != null)
+                    return user.FavouriteRecipes.Where(r => r.Categories.Any(c => c.Name == categoryName)).AsQueryable();
+                else
+                    return user.FavouriteRecipes.AsQueryable();
+            }
             else
-                return this.Recipes;
+            {
+                if (categoryName != null)
+                    return this.Recipes.Where(r => r.Categories.Any(c => c.Name == categoryName));
+                else
+                    return this.Recipes;
+            }
         }
 
         public void DeleteRecipe(Guid id)

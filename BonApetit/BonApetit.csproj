@@ -417,6 +417,7 @@
     <Compile Include="Models\Recipe.cs" />
     <Compile Include="Models\Users\RoleConst.cs" />
     <Compile Include="Models\Users\UserConst.cs" />
+    <Compile Include="QueryString.cs" />
     <Compile Include="Recipes\AddRecipe.aspx.cs">
       <DependentUpon>AddRecipe.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
