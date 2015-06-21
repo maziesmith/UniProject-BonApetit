@@ -105,3 +105,6 @@ UpgradeLog*.htm
 */App_Data/*.ldf
 *.mdf
 *.ldf
+*.jpg
+*.mdf
+BonApetit/App_Data/BonApetit.bak

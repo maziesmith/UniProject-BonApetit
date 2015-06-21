@@ -42,21 +42,32 @@
 
         <div class="col-md-8">
 
-            <asp:ListView ID="RecipesView" runat="server" ItemType="BonApetit.Models.Recipe" DataKeyNames="Id" SelectMethod="GetRecipes">
-                <EmptyDataTemplate>
-                    <div class="alert alert-warning text-center" role="alert">No recipes found.</div>
-                </EmptyDataTemplate>
+            <div class="row">
+                <asp:ListView ID="RecipesView" runat="server" ItemType="BonApetit.Models.Recipe" DataKeyNames="Id" SelectMethod="GetRecipes" OnPagePropertiesChanging="RecipesView_PagePropertiesChanging">
+                    <EmptyDataTemplate>
+                        <div class="alert alert-warning text-center" role="alert">No recipes found.</div>
+                    </EmptyDataTemplate>
 
-                <ItemTemplate>
-                    <div class="col-md-3 text-center">
-                        <a href="RecipeDetails.aspx?recipeId=<%#:Item.Id %>" title="<%#: Item.Name %>">
-                            <img class="img-responsive img-thumbnail" src="<%#: string.Format("Images/{0}", Item.Image.ImageUrl) %>" alt="<%#:Item.Image.AltText %>" />
-                            <h3 class="h5" ID="RecipeTitle"><%#:Item.Name %></h3>
-                        </a>
-                    </div>
-                </ItemTemplate>
-            </asp:ListView>
+                    <ItemTemplate>
+                        <div class="col-md-3 text-center">
+                            <a href="RecipeDetails.aspx?recipeId=<%#:Item.Id %>" title="<%#: Item.Name %>">
+                                <img class="img-responsive img-thumbnail" src="<%#: string.Format("Images/{0}", Item.Image.ImageUrl) %>" alt="<%#:Item.Image.AltText %>" />
+                                <h3 class="h5" ID="RecipeTitle"><%#:Item.Name %></h3>
+                            </a>
+                        </div>
+                    </ItemTemplate>
+                </asp:ListView>
+            </div>
 
+            <div class="row text-center">
+                <asp:DataPager runat="server" PagedControlID="RecipesView" PageSize="4" QueryStringField="id" ID="Pager" Visible="true">
+                    <Fields>
+                        <%--<asp:NextPreviousPagerField ButtonType="Button" ButtonCssClass="btn btn-default" ShowFirstPageButton="false" ShowPreviousPageButton="true" ShowNextPageButton="false" />--%>
+                        <asp:NumericPagerField ButtonType="Button" NumericButtonCssClass="btn btn-default" CurrentPageLabelCssClass="btn btn-warning" />
+                        <%--<asp:NextPreviousPagerField ButtonType="Button" ButtonCssClass="btn btn-default" ShowNextPageButton="true" ShowLastPageButton="false" ShowPreviousPageButton = "false" />--%>
+                    </Fields>
+                </asp:DataPager>
+            </div>
         </div>
 
         <div class="col-md-2">

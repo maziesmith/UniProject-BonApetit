@@ -24,7 +24,7 @@ namespace BonApetit.Recipes
 
         }
 
-        public IEnumerable<Recipe> GetRecipes()
+        public IQueryable<Recipe> GetRecipes()
         {
             int pageId;
             int.TryParse(Request.QueryString["id"], out pageId);
@@ -32,7 +32,7 @@ namespace BonApetit.Recipes
 
             var allRecipes = db.GetRecipes(category, favouritesOnly);
             var totalRecipesCount = allRecipes.Count();
-            var recipes = allRecipes.OrderByDescending(r => r.CreateDate).Skip(pageId * 4).Take(4);
+            var recipes = allRecipes.OrderByDescending(r => r.CreateDate);//.Skip(pageId * 4).Take(4);
 
             return recipes;
         }
@@ -79,6 +79,12 @@ namespace BonApetit.Recipes
 
                 this.FavouritesButton.Visible = true;
             }
+        }
+
+        protected void RecipesView_PagePropertiesChanging(object sender, PagePropertiesChangingEventArgs e)
+        {
+            this.Pager.SetPageProperties(e.StartRowIndex, e.MaximumRows, false);
+            this.RecipesView.DataBind();
         }
     }
 }
